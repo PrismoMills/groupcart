@@ -1,0 +1,8 @@
+.search-bar[data-tag-search] { position: relative; display: block; flex-shrink: 0; }
+.search-bar[data-tag-search] input[type="text"] { box-sizing: border-box; width: 190px; max-width: 70vw; margin-right: 0; }
+.search-bar[data-tag-search] .tag-options { position: absolute; top: calc(100% + 5px); left: 0; z-index: 1000; width: max-content; min-width: 100%; max-width: min(300px, 80vw); max-height: 230px; overflow-y: auto; background: white; border: 1px solid #d3e1ea; border-radius: 8px; box-shadow: 0 6px 18px #29495c20; padding: 4px; }
+.search-bar[data-tag-search] .tag-options[hidden] { display: none; }
+.search-bar[data-tag-search] button.tag-option { display: block; width: 100%; text-align: left; margin: 0; padding: 10px 12px; color: #365363; background: white; border: 0; border-radius: 5px; font: inherit; cursor: pointer; white-space: normal; }
+.search-bar[data-tag-search] button.tag-option:hover,
+.search-bar[data-tag-search] button.tag-option:focus-visible { background: #eaf3ff; color: #294d63; outline: 2px solid #91c4f6; outline-offset: -2px; }
+.tag-search-status { padding: 10px; color: #637885; font-size: 13px; }

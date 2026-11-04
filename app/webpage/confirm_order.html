@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Confirm Order</title>
+    <style type="text/css">
+
+        body, h1, h2, h3, p, ul, li, form, input, button, table, th, td {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #ffffff;
+            font-family: 'Comic Sans MS', 'Chalkboard', cursive, sans-serif;
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            padding: 10px 0;
+        }
+        .header-container img {
+            width: 400px;
+            height: auto;
+        }
+        nav {
+            background: #91c4f6;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .nav-center {
+            list-style-type: none;
+            display: flex;
+            flex-grow: 1;
+            justify-content: center;
+        }
+        .nav-center li {
+            margin: 0 15px;
+        }
+        .nav-center li a {
+            color: #3f5964;
+            text-decoration: none;
+            padding: 10px 20px;
+            display: block;
+            transition: background-color 0.3s, color 0.3s;
+            border: 2px solid transparent;
+        }
+        .nav-center li a:hover {
+            background-color: #cfe4f5;
+            color: #9ed2f0;
+            border-radius: 5px;
+        }
+        /* General search bar: add drop-down suggestion function */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            position: relative; /* Drop down menu absolute positioning */
+            margin-right: 15px;
+        }
+        .search-bar input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+            font-family: 'Comic Sans MS', 'Chalkboard', cursive, sans-serif;
+        }
+        .search-bar button {
+            padding: 8px 15px;
+            background-color: #ffffff;
+            color: #3f5964;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Comic Sans MS', 'Chalkboard', cursive, sans-serif;
+        }
+        .search-bar button:hover {
+            background-color: #ffb6c1;
+            color: #ffffff;
+            border: 1px solid #ffffff;
+        }
+        /* Drop down suggestion menu */
+        #searchSuggestions {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: #ffffff;
+            border: 1px solid #ccc;
+            max-height: 150px;  /* Fixed display about 5 lines */
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        #searchSuggestions div {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        #searchSuggestions div:hover {
+            background: #cfe4f5;
+        }
+        .login-links {
+            margin-left: 10px;
+        }
+        .login-links a {
+            margin-left: 10px;
+            text-decoration: none;
+            color: #3f5964;
+            font-weight: bold;
+            padding: 8px 12px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .login-links a:hover {
+            background-color: #ffb6c1;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        /* Order summary section */
+        .order-summary {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .order-summary h2 {
+            margin-bottom: 15px;
+            font-size: 24px;
+            color: #333;
+        }
+        .order-summary p {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .order-summary input[type="number"] {
+            padding: 8px;
+            font-size: 16px;
+            width: 80px;
+        }
+        .order-summary .subtotal {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        /* Deliver and Payment */
+         .delivery-info {
+            margin-bottom: 20px;
+        }
+        .delivery-info p {
+            font-size: 18px;
+            color: #555;
+        }
+        /* Payment Information */
+        .payment-info {
+            margin-bottom: 20px;
+        }
+        .payment-info p {
+            font-size: 18px;
+            color: #555;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .action-buttons button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #ec8dcb;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .action-buttons button:hover {
+            background-color: #d17abf;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #ccc;
+            color: #666;
+            margin-top: 40px;
+        }
+    </style>
+    <script src="navigation.js?v=20261105-logo-align"></script>
+    <link rel="stylesheet" href="tag-search.css">
+    <script src="tag-search.js"></script>
+    <link rel="stylesheet" href="site-header.css?v=20261105-logo-align">
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <img src="logo2.png" alt="Company Logo">
+        </div>
+        <nav>
+            <ul class="nav-center">
+                <li><a href="home.html">Home</a></li>
+                <li><a href="product.html">Products</a></li>
+                <li data-cart-nav><a href="cart.html">Cart</a></li>
+                <li data-order-nav><a href="order.html">Order</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">FAQ</a></li>
+            </ul>
+            <div class="search-bar" data-tag-search>
+                <input type="text" data-tag-input placeholder="Choose a tag..." aria-label="Search by tag" aria-expanded="false" autocomplete="off">
+                <div class="tag-options" data-tag-options hidden></div>
+            </div>
+            <div class="login-links" id="loginLinks">
+                <a href="login.html" id="loginLink">Login</a>
+                <a href="register.html" id="registerLink">Register</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1 style="text-align:center; margin-bottom:20px;">Confirm Your Order</h1>
+
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+            <p><strong>Product Name:</strong> <span id="productName">Loading...</span></p>
+            <p><strong>Product ID:</strong> <span id="productId">Loading...</span></p>
+            <p><strong>Price:</strong> $<span id="price">Loading...</span></p>
+            <p>
+                <strong>Quantity:</strong>
+                <input type="number" id="quantity" value="1" min="1" onchange="updateSubtotal()">
+            </p>
+            <p class="subtotal">Subtotal: $<span id="subtotal">0.00</span></p>
+        </div>
+
+        <!-- Address info -->
+        <div class="delivery-info">
+            <p><strong>Delivery Address:</strong> <span id="shippingAddress">Loading address...</span></p>
+        </div>
+
+        <!-- Payment info -->
+        <div class="payment-info">
+            <label for="paymentMethod">Payment Method:</label>
+            <input type="text" id="paymentMethod" placeholder="e.g., Payment on Delivery" readonly value="Payment on Delivery">
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button onclick="confirmOrder()">Confirm Order</button>
+            <button onclick="window.location.href='product.html'">Back to Shopping</button>
+        </div>
+    </div>
+
+
+    <footer>
+        <p>GroupCart · Multi-vendor shopping platform</p>
+    </footer>
+
+    <script>
+        let currentVendorID = null;
+
+        // Login status detection and logout function
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('isRegistered') === 'true') {
+                const loginLinksDiv = document.getElementById('loginLinks');
+                if (loginLinksDiv) {
+                    loginLinksDiv.innerHTML = '<a href="#" id="logoutLink">Log Out</a>';
+                    document.getElementById('logoutLink').addEventListener('click', function() {
+                        localStorage.removeItem('isRegistered');
+                        localStorage.removeItem('CustomerID');
+                        localStorage.removeItem('VendorID');
+                        localStorage.removeItem('userType');
+                        localStorage.removeItem('vendorBusinessName');
+                        alert("You have been logged out.");
+                        window.location.href = "home.html";
+                    });
+                }
+            }
+        // Initialize search dropdown function: This function is a universal search code, which can be directly copied for the next reference
+            initSearchDropdown();
+        });
+        // Universal search dropdown function
+        function initSearchDropdown() { window.initTagSearch(); }
+        // Read the ProductID parameter from the URL
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                ProductID: params.get('ProductID'),
+                Name: params.get('Name') || 'Sample Product',
+                ListedPrice: params.get('ListedPrice') || '0.00'
+            };
+        }
+
+        // Initialize order details during page loading
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = getUrlParams();
+            if(params.ProductID) {
+                fetch(`http://localhost:5000/api/buy_product/${params.ProductID}`)
+                    .then(response => response.json())
+                    .then(product => {
+                        if(product && product.ProductID) {
+                            document.getElementById('productName').textContent = product.Name;
+                            document.getElementById('productId').textContent = 'Product ID: ' + product.ProductID;
+                            document.getElementById('price').textContent = 'Price: $' + parseFloat(product.ListedPrice).toFixed(2);
+                        } else {
+                            // 使用 URL 参数作为回退
+                            document.getElementById('productName').textContent = params.Name;
+                            document.getElementById('productId').textContent = 'Product ID: ' + params.ProductID;
+                            document.getElementById('price').textContent = 'Price: $' + parseFloat(params.ListedPrice).toFixed(2);
+                        }
+                        updateSubtotal();
+                    })
+                    .catch(error => {
+                        console.error("Error loading product detail:", error);
+                        document.getElementById('productName').textContent = params.Name;
+                        document.getElementById('productId').textContent = params.ProductID;
+                        document.getElementById('price').textContent = parseFloat(params.ListedPrice).toFixed(2);
+                        updateSubtotal();
+                    });
+            }
+            // Load the current user's address, assuming the backend provides the/app/customer-info interface
+            const customerID = localStorage.getItem('CustomerID');
+            if(customerID){
+                fetch(`http://localhost:5000/api/customer_info?CustomerID=${customerID}`)
+                  .then(response => response.json())
+                  .then(data => {
+                      if(data.success){
+                          document.getElementById('shippingAddress').textContent = data.customer.ShippingDetails;
+                      } else {
+                          document.getElementById('shippingAddress').textContent = "Address not found.";
+                      }
+                  })
+                  .catch(error => {
+                      console.error("Error fetching customer info:", error);
+                      document.getElementById('shippingAddress').textContent = "Error loading address.";
+                  });
+            } else {
+                document.getElementById('shippingAddress').textContent = "Not logged in.";
+            }
+        });
+
+        // Update subtotal
+        function updateSubtotal() {
+            const quantity = Number(document.getElementById('quantity').value);
+            const price = parseFloat(document.getElementById('price').textContent.replace('Price: $',''));
+            const subtotal = quantity * price;
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+        }
+
+        // Confirm the order and call the backend/app/confirm_order interface
+        function confirmOrder() {
+            if(localStorage.getItem('isRegistered') !== 'true' || localStorage.getItem('userType') !== 'customer'){
+                alert("Only logged in customers can confirm orders.");
+                window.location.href = "register.html";
+                return;
+            }
+            const params = getUrlParams();
+            const quantity = Number(document.getElementById('quantity').value);
+            if (!Number.isInteger(quantity) || quantity < 1 || quantity > 2147483647) {
+                alert('Quantity must be a positive integer.');
+                return;
+            }
+            const subtotal = parseFloat(document.getElementById('subtotal').textContent);
+            const customerID = localStorage.getItem('CustomerID');
+            // Upload product information, quantity, total price, CustomerID, and vendorID (which can be returned through product details)
+            // Attention: The vendorID here needs to be obtained from the product details interface. If necessary, please expand the logic
+            const orderData = {
+                ProductID: params.ProductID,
+                TotalAmount: subtotal,
+                Quantity: quantity,
+                customerID: customerID,
+                vendorID: null,  // If there is vendor ID information, please set it, leave it blank for now
+                userType: 'customer'
+            };
+            fetch('http://localhost:5000/api/confirm_order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success){
+                    alert("Order confirmed successfully!");
+                    window.location.href = "order.html";
+                } else {
+                    alert("Error: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Error confirming order:", error);
+                alert("Failed to confirm order.");
+            });
+        }
+    </script>
+</body>
+</html>

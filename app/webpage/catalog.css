@@ -1,0 +1,129 @@
+        /* Category menu: scroll horizontally */
+        .category-menu {
+            background: #cfe4f5;
+            padding: 6px 20px;
+            margin: 10px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .category-menu ul {
+            list-style-type: none;
+            display: flex;
+            align-items: center;
+        }
+        .category-menu ul li {
+            margin: 0 15px;
+            flex-shrink: 0;
+        }
+        .category-menu ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            padding: 2px 15px;
+            line-height: 24px;
+            transition: all 0.3s ease;
+        }
+        .category-menu ul li a:hover {
+            background-color: #cfe4f5;
+            color: #94b7e7;
+            border-radius: 5px;
+        }
+        /* Page Title */
+        .page-title {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 15px;
+            color: #000000;
+            font-weight: bolder;
+        }
+        /* Product showcasing area */
+        .product-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+            justify-content: center;
+        }
+        .product {
+            position: relative;
+            border: 1px solid #ddd;
+            width: 200px;
+            text-align: center;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .product:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .product img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: opacity 0.3s ease;
+        }
+        .product:hover img {
+            opacity: 0.7;
+        }
+        .product h3 {
+            margin: 0;
+            padding: 5px;
+            font-size: 18px;
+            flex-grow: 1;                        /* Occupy the remaining room */
+            display: flex;
+            align-items: flex-end;               /* Vertical bottom alignment */
+            justify-content: center;             /* horizontally */
+        }
+        .product p {
+            margin: 5px 0 10px;
+            font-size: 16px;
+            color: #555;
+        }
+        /* Paging navigation */
+        .pagination {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .pagination button {
+            margin: 0 5px;
+            padding: 8px 12px;
+            font-size: 16px;
+            background-color: #ec8dcb;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .pagination button:hover {
+            background-color: #d17abf;
+        }
+        /* Fixed plus button(for vendor to add/upload products), displayed only in vendor status */
+        .add-product-btn {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            background-color: #ec8dcb;
+            color: #ffffff;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 36px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: background-color 0.3s;
+        }
+        .add-product-btn:hover {
+            background-color: #d17abf;
+        }
+
+.category-menu a[aria-current="true"] { background: #b9d7ee; border-radius: 5px; color: #284d65; }
+.category-menu ul li a { display: inline-block; }
+.category-menu ul { margin: 0; padding: 0; }
+.category-menu .vendor-label { display: inline-block; padding: 2px 15px; line-height: 24px; color: #333; font-weight: bold; cursor: default; }
+.product-container > .catalog-message { width: 100%; text-align: center; padding: 30px; color: #637885; }
+.product:focus-visible { outline: 3px solid #91c4f6; outline-offset: 3px; }

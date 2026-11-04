@@ -1,0 +1,16 @@
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.idea/
+.vscode/
+.env
+.env.*
+!.env.example
+app/db_config.json
+*admin.json
+mysql-test/
+*.log
+*.zip
+.DS_Store
+Thumbs.db

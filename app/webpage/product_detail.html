@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Product Detail</title>
+    <style type="text/css">
+
+        body, h1, h2, h3, p, ul, li, input, button, form, select {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #ffffff;
+            font-family: 'Comic Sans MS', 'Chalkboard', cursive, sans-serif;
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            padding: 10px 0;
+        }
+        .header-container img {
+            width: 400px;
+            height: auto;
+        }
+        nav {
+            background: #91c4f6;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .nav-center {
+            list-style-type: none;
+            display: flex;
+            flex-grow: 1;
+            justify-content: center;
+        }
+        .nav-center li {
+            margin: 0 15px;
+        }
+        .nav-center li a {
+            color: #3f5964;
+            text-decoration: none;
+            padding: 10px 20px;
+            display: block;
+            transition: background-color 0.3s, color 0.3s;
+            border: 2px solid transparent;
+        }
+        .nav-center li a:hover {
+            background-color: #cfe4f5;
+            color: #9ed2f0;
+            border-radius: 5px;
+        }
+        /* General search bar: add drop-down suggestion function */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            position: relative; /* Drop down menu absolute positioning needs */
+            margin-right: 15px;
+        }
+        .search-bar input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+            font-family: 'Comic Sans MS', 'Chalkboard', cursive, sans-serif;
+        }
+        .search-bar button {
+            padding: 8px 15px;
+            background-color: #ffffff;
+            color: #3f5964;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Comic Sans MS', 'Chalkboard', cursive, sans-serif;
+        }
+        .search-bar button:hover {
+            background-color: #ffb6c1;
+            color: #ffffff;
+            border: 1px solid #ffffff;
+        }
+        /* Drop down suggestion menu */
+        #searchSuggestions {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: #ffffff;
+            border: 1px solid #ccc;
+            max-height: 150px;  /* Fixed display about 5 lines */
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        #searchSuggestions div {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        #searchSuggestions div:hover {
+            background: #cfe4f5;
+        }
+        .login-links {
+            margin-left: 10px;
+        }
+        .login-links a {
+            text-decoration: none;
+            color: #3f5964;
+            font-weight: bold;
+            padding: 8px 12px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .login-links a:hover {
+            background-color: #ffb6c1;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        /* Product detail view */
+        .product-detail {
+            display: flex;
+            gap: 20px;
+        }
+        .product-image {
+            flex: 1;
+            max-width: 400px;
+        }
+        .product-image img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        .product-info {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .product-info h2 {
+            font-size: 28px;
+            color: #333;
+        }
+        .product-info p {
+            font-size: 18px;
+            color: #555;
+        }
+        .tags {
+            display: flex;
+            gap: 10px;
+        }
+        .tag {
+            background: #cfe4f5;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            color: #333;
+        }
+        .action-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+        }
+        .action-buttons button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #ec8dcb;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .action-buttons button:hover {
+            background-color: #d17abf;
+        }
+        /* Supplier upload form */
+        .upload-form {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .upload-form label {
+            font-size: 18px;
+            color: #333;
+        }
+        .upload-form input, .upload-form select {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .upload-form button {
+            padding: 10px;
+            font-size: 18px;
+            background-color: #ec8dcb;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .upload-form button:hover {
+            background-color: #d17abf;
+        }
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #ccc;
+            color: #666;
+            margin-top: 40px;
+        }
+    </style>
+    <script src="navigation.js?v=20261105-logo-align"></script>
+    <link rel="stylesheet" href="tag-search.css">
+    <script src="tag-search.js"></script>
+    <link rel="stylesheet" href="site-header.css?v=20261105-logo-align">
+</head>
+<body>
+    <!-- Header and Navigation -->
+    <header>
+        <div class="header-container">
+            <img src="logo2.png" alt="Company Logo">
+        </div>
+        <nav>
+            <ul class="nav-center">
+                <li><a href="home.html">Home</a></li>
+                <li><a href="product.html">Products</a></li>
+                <li data-cart-nav><a href="cart.html">Cart</a></li>
+                <li data-order-nav><a href="order.html">Order</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">FAQ</a></li>
+            </ul>
+            <div class="search-bar" data-tag-search>
+                <input type="text" data-tag-input placeholder="Choose a tag..." aria-label="Search by tag" aria-expanded="false" autocomplete="off">
+                <div class="tag-options" data-tag-options hidden></div>
+            </div>
+            <div class="login-links" id="loginLinks">
+                <a href="login.html" id="loginLink">Login</a>
+                <a href="register.html" id="registerLink">Register</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Detail mode: display product details -->
+        <div id="productDetailView" style="display: none;">
+            <div class="product-detail">
+                <div class="product-image">
+                    <img id="detailImage" src="default_product.png" alt="Product Image">
+                </div>
+                <div class="product-info">
+                    <h2 id="productName">Product Name</h2>
+                    <p id="productId">Product ID: </p>
+                    <p id="supplierInfo">Sold by: <span id="supplierName">SupplierName</span> ⭐<span id="supplierRating">4.5</span></p>
+                    <p id="price">Price: $0.00</p>
+                    <div class="tags" id="tagContainer">
+                        <!-- Labels associated with products will be generated dynamically -->
+                    </div>
+                    <div class="action-buttons" id="purchaseButtons">
+                        <button onclick="handleBuyNowDetail()">Buy Now</button>
+                        <button onclick="handleAddToCartDetail()">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload mode: only vendors are allowed to upload new products -->
+        <div id="uploadFormView" style="display: none;">
+            <h2 style="text-align:center; margin-bottom:20px;">Upload New Product</h2>
+            <form class="upload-form" onsubmit="uploadProduct(event)">
+                <label for="uploadName">Product Name:</label>
+                <input type="text" id="uploadName" required>
+
+                <label for="uploadPrice">Price (ListedPrice):</label>
+                <input type="number" id="uploadPrice" step="0.01" required>
+
+                <label for="uploadTag1">Tag 1:</label>
+                <select id="uploadTag1">
+                    <!-- Options are loaded by loadtagoptions -->
+                </select>
+
+                <label for="uploadTag2">Tag 2:</label>
+                <select id="uploadTag2">
+                    <!-- Options are loaded by loadtagoptions -->
+                </select>
+
+                <label for="uploadTag3">Tag 3:</label>
+                <select id="uploadTag3">
+                    <!-- Options are loaded by loadtagoptions -->
+                </select>
+                <button type="button" onclick="addNewTag()">Add New Tag</button>
+
+
+                <label for="uploadImage">Image URL:</label>
+                <input type="text" id="uploadImage" placeholder="http://example.com/image.png">
+
+                <button type="submit">Upload Product</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>GroupCart · Multi-vendor shopping platform</p>
+    </footer>
+
+    <script>
+        // General login status detection and logout function
+        document.addEventListener('DOMContentLoaded', function() {
+            if(localStorage.getItem('isRegistered') === 'true') {
+                const loginLinksDiv = document.getElementById('loginLinks');
+                loginLinksDiv.innerHTML = '<a href="#" id="logoutLink">Log Out</a>';
+                document.getElementById('logoutLink').addEventListener('click', function() {
+                    localStorage.removeItem('isRegistered');
+                    localStorage.removeItem('CustomerID');
+                    localStorage.removeItem('VendorID');
+                    localStorage.removeItem('userType');
+                    localStorage.removeItem('vendorBusinessName');
+                    alert("You have been logged out.");
+                    window.location.href = "home.html";
+                });
+            }
+        // Initialize search drop-down function: this function is a general search code, which can be copied directly in the next reference
+            initSearchDropdown();
+        });
+        // General search drop-down function
+        function initSearchDropdown() { window.initTagSearch(); }
+
+        // GET URL parameters into product detailed info
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                ProductID: params.get('ProductID'),
+                Name: params.get('Name') || 'Sample Product',
+                ListedPrice: params.get('ListedPrice') || '0.00',
+                image: params.get('image') || 'default_product.png'
+            };
+        }
+
+        // Determine the mode according to the URL parameters: details mode or upload mode
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = getUrlParams();
+            if (params.ProductID) {
+                document.getElementById('productDetailView').style.display = 'block';
+                loadProductDetail(params.ProductID);
+            } else {
+                // Upload mode: only vendors are allowed to upload
+                if(localStorage.getItem('userType') !== 'vendor'){
+                    alert("Only vendors can upload products.");
+                    window.location.href = "home.html";
+                    return;
+                }
+                document.getElementById('uploadFormView').style.display = 'block';
+                loadTagOptions();
+            }
+        });
+
+        // Load product detail data
+        function loadProductDetail(productId) {
+            fetch(`http://localhost:5000/api/buy_product/${productId}`)
+                .then(response => response.json())
+                .then(product => {
+                    const params = getUrlParams();
+                    let imagePath = "";
+                    const serverHost = "http://127.0.0.1:5000";
+                    if (product.image && product.image.trim() !== "") {
+                        imagePath = product.image;
+                    } else if (product.Name) {
+                        // Using window.location.origin to generate a complete URL (make sure to load pictures from the flame backend service)
+                        imageName = product.Name.replace(/\s+/g, '') + ".png";
+                        imagePath = `${serverHost}/static/images/${imageName}`;
+                    }
+                    document.getElementById('detailImage').src = imagePath;
+                    // Use the interface to return data. If there is any missing data, use the URL parameter
+                    document.getElementById('productName').textContent = product.Name || params.Name;
+                    document.getElementById('productId').textContent = 'Product ID: ' + (product.ProductID || params.ProductID);
+                    document.getElementById('price').textContent = 'Price: $' + parseFloat(product.ListedPrice || params.ListedPrice).toFixed(2);
+                    // Calling vendor_info Interface to get vendor's BusinessName and CustomerFeedback
+                    if(product.VendorID) {
+                        fetch(`http://localhost:5000/api/vendor_info?vendorID=${product.VendorID}`)
+                          .then(response => response.json())
+                          .then(vendorData => {
+                              if(vendorData.success){
+                                  const vendor = vendorData.vendor;
+                                  document.getElementById('supplierInfo').innerHTML = 'Sold by: ' + vendor.BusinessName + ' ⭐' + vendor.CustomerFeedbackScore;
+                              } else {
+                                  document.getElementById('supplierInfo').innerHTML = 'Sold by: Unknown';
+                              }
+                          })
+                          .catch(error => {
+                              console.error("Error fetching vendor info:", error);
+                              document.getElementById('supplierInfo').innerHTML = 'Sold by: Unknown';
+                          });
+                    } else {
+                        document.getElementById('supplierInfo').innerHTML = 'Sold by: Unknown';
+                    }
+                    // Load the tag associated with the product and call the interface /api/product_tags?ProductID=...
+                    fetch(`http://localhost:5000/api/product_tags?ProductID=${productId}`)
+                      .then(response => response.json())
+                      .then(tagData => {
+                          const tagContainer = document.getElementById('tagContainer');
+                          tagContainer.innerHTML = "";
+                          if(tagData.success && Array.isArray(tagData.tags) && tagData.tags.length > 0){
+                              tagData.tags.forEach(tag => {
+                                  const span = document.createElement("span");
+                                  span.className = "tag";
+                                  span.textContent = tag.TagName;
+                                  tagContainer.appendChild(span);
+                              });
+                          } else {
+                              // If there is no tag data, the default tag is displayed
+                              tagContainer.innerHTML = '<span class="tag">Tag1</span><span class="tag">Tag2</span><span class="tag">Tag3</span>';
+                          }
+                      })
+                      .catch(error => {
+                          console.error("Error fetching product tags:", error);
+                          document.getElementById('tagContainer').innerHTML = '<span class="tag">Tag1</span><span class="tag">Tag2</span><span class="tag">Tag3</span>';
+                      });
+
+                    // If the current user is a vendor, hide the purchase button
+                    if(localStorage.getItem('userType') === 'vendor'){
+                        document.getElementById('purchaseButtons').style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error("Error loading product detail:", error);
+                    // Use URL parameter fallback when error occurs
+                    const params = getUrlParams();
+                    document.getElementById('productName').textContent = params.Name;
+                    document.getElementById('productId').textContent = 'Product ID: ' + params.ProductID;
+                    document.getElementById('price').textContent = 'Price: $' + parseFloat(params.ListedPrice).toFixed(2);
+                    document.getElementById('supplierInfo').innerHTML = 'Sold by: Unknown';
+                    document.getElementById('tagContainer').innerHTML = '<span class="tag">Tag1</span><span class="tag">Tag2</span><span class="tag">Tag3</span>';
+                    document.getElementById('detailImage').src = window.location.origin + "/static/images/default_product.png";
+                });
+        }
+
+        // Buy now button for processing details page (only customer is allowed)
+        function handleBuyNowDetail() {
+            const params = getUrlParams();
+            if(localStorage.getItem('isRegistered') === 'true' && localStorage.getItem('userType') === 'customer'){
+                window.location.href = 'confirm_order.html?ProductID=' + params.ProductID;
+            } else if(localStorage.getItem('userType') === 'vendor'){
+                alert("Suppliers are not allowed to purchase products.");
+            } else {
+                alert("Please register to proceed with purchase.");
+                window.location.href = 'register.html';
+            }
+        }
+
+        // Add to cart button on the processing details page (only customer is allowed)
+        function handleAddToCartDetail() {
+            const params = getUrlParams();
+            if(localStorage.getItem('isRegistered') === 'true' && localStorage.getItem('userType') === 'customer'){
+                addToCart(params.ProductID, params.Name, params.ListedPrice);
+            } else if(localStorage.getItem('userType') === 'vendor'){
+                alert("Suppliers are not allowed to add items to cart.");
+            } else {
+                alert("Please register to add items to cart.");
+                window.location.href = 'register.html';
+            }
+        }
+
+        // Add product to shopping cart (localstorage simulation)
+        function addToCart(ProductID, productName, price) {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const product = cart.find(item => item.ProductID === ProductID);
+            if (product){
+                product.Quantity++;
+            } else{
+                cart.push({ ProductID: ProductID, Name: productName, ListedPrice: price, Quantity: 1 });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert('Product added to cart!');
+        }
+
+        // Load tag drop-down list (analog data, can be obtained by calling the interface later)
+        function loadTagOptions() {
+            // Get tag list data
+            // Publishing can use all existing tags; search suggestions are scoped.
+            fetch('http://localhost:5000/api/get_tags')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const tags = data.tags; // Get tag list
+                        ['uploadTag1', 'uploadTag2', 'uploadTag3'].forEach(selectId => {
+                            const select = document.getElementById(selectId);
+                            select.innerHTML = ""; // Clear existing options
+                            tags.forEach(tag => {
+                                const option = document.createElement("option");
+                                option.value = tag;
+                                option.textContent = tag;
+                                select.appendChild(option);
+                            });
+                        });
+                    } else {
+                        alert('Failed to load tags: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching tags:', error);
+                    alert('An error occurred while loading tags.');
+                });
+        }
+
+
+
+
+
+        // New tag function: call the back-end interface to upload the new tag to the database
+        function addNewTag() {
+            const newTag = prompt("Enter new tag:");
+            if(newTag && newTag.trim() !== "") {
+                fetch('http://localhost:5000/api/add_tag', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ TagName: newTag.trim() })
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if(result.success){
+                        const select = document.getElementById("uploadTag1");
+                        const option = document.createElement("option");
+                        option.value = newTag.trim();
+                        option.textContent = newTag.trim();
+                        select.appendChild(option);
+                        select.value = newTag.trim();
+                        alert("Tag added successfully!");
+                    } else {
+                        alert("Error: " + result.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error adding new tag:", error);
+                    alert("Failed to add tag. Please try again later.");
+                });
+            }
+        }
+
+        // Upload product form submission
+        function uploadProduct(event) {
+            event.preventDefault();
+            if(localStorage.getItem('userType') !== 'vendor'){
+                alert("Only vendors can upload products.");
+                return;
+            }
+            const newProduct = {
+                userType: localStorage.getItem('userType'),
+                Name: document.getElementById('uploadName').value,
+                ListedPrice: document.getElementById('uploadPrice').value,
+                VendorID: localStorage.getItem('VendorID'),
+                // Modify to three tag fields
+                tag1: document.getElementById('uploadTag1').value,
+                tag2: document.getElementById('uploadTag2').value,
+                tag3: document.getElementById('uploadTag3').value,
+                image: document.getElementById('uploadImage').value || 'default_product.png'
+            };
+            fetch('http://localhost:5000/api/insert_product', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newProduct)
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if(result.success){
+                        alert("Product uploaded successfully!");
+                        document.querySelector('.upload-form').reset();
+                    } else {
+                        alert("Error: " + result.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error uploading product:", error);
+                    alert("Failed to upload product. Please try again later.");
+                });
+        }
+    </script>
+</body>
+</html>

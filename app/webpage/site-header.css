@@ -1,0 +1,14 @@
+/* Shared compact branding: keep the same logo and navigation across pages. */
+header .header-container { padding: 10px 20px !important; min-height: 0; box-sizing: border-box; background: linear-gradient(180deg, #fff, #f7fbff) !important; }
+header .header-container img { display: block; width: 190px !important; max-width: 60vw !important; height: auto !important; max-height: 62px; object-fit: contain; margin: 0 auto; }
+header nav { padding: 7px 16px; border-radius: 10px; box-shadow: 0 3px 12px #35556a12; gap: 10px; flex-wrap: wrap; }
+header .nav-center { gap: clamp(10px, 1.4vw, 20px); flex-wrap: wrap; align-items: center; }
+header .nav-center li { margin: 0; transform: translateX(var(--navigation-shift, 0px)); }
+header .nav-center li a { padding: 8px 12px; font-size: 16px; font-weight: 700; white-space: nowrap; }
+@media (max-width: 700px) {
+    header .header-container { padding: 8px 12px !important; }
+    header .header-container img { width: 155px !important; max-height: 50px; }
+    header nav { padding: 8px 10px; }
+    header .nav-center { gap: 6px; }
+    header .nav-center li a { padding: 7px 9px; }
+}

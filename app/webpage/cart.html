@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Shopping Cart</title>
+    <style type="text/css">
+
+        body, h1, h2, h3, p, ul, li, table, th, td, input, button {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #ffffff;
+            font-family: 'Comic Sans MS', 'Chalkboard', cursive, sans-serif;
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            padding: 10px 0;
+        }
+        .header-container img {
+            width: 400px;
+            height: auto;
+        }
+        nav {
+            background: #91c4f6;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .nav-center {
+            list-style-type: none;
+            display: flex;
+            flex-grow: 1;
+            justify-content: center;
+        }
+        .nav-center li {
+            margin: 0 15px;
+        }
+        .nav-center li a {
+            color: #3f5964;
+            text-decoration: none;
+            padding: 10px 20px;
+            display: block;
+            transition: background-color 0.3s, color 0.3s;
+            border: 2px solid transparent;
+        }
+        .nav-center li a:hover {
+            background-color: #cfe4f5;
+            color: #9ed2f0;
+            border-radius: 5px;
+        }
+        /* General search bar: add drop-down suggestion function */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            position: relative; /* Drop down menu absolute positioning needs */
+            margin-right: 15px;
+        }
+        .search-bar input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+            font-family: 'Comic Sans MS', 'Chalkboard', cursive, sans-serif;
+        }
+        .search-bar button {
+            padding: 8px 15px;
+            background-color: #ffffff;
+            color: #3f5964;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Comic Sans MS', 'Chalkboard', cursive, sans-serif;
+        }
+        .search-bar button:hover {
+            background-color: #ffb6c1;
+            color: #ffffff;
+            border: 1px solid #ffffff;
+        }
+        /* Drop down suggestion menu */
+        #searchSuggestions {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: #ffffff;
+            border: 1px solid #ccc;
+            max-height: 150px;  /* Fixed display about 5 lines */
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        #searchSuggestions div {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        #searchSuggestions div:hover {
+            background: #cfe4f5;
+        }
+        .login-links a {
+            margin-left: 10px;
+            text-decoration: none;
+            color: #3f5964;
+            font-weight: bold;
+            padding: 8px 12px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .login-links a:hover {
+            background-color: #ffb6c1;
+            color: #ffffff;
+        }
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        /* Cart Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background: #f2f2f2;
+        }
+        input[type="number"] {
+            width: 60px;
+            padding: 5px;
+        }
+        /* action button */
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .action-buttons button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #ec8dcb;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .action-buttons button:hover {
+            background-color: #d17abf;
+        }
+        /* Total price display */
+        .total-price {
+            text-align: right;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #ccc;
+            color: #666;
+            margin-top: 40px;
+        }
+    </style>
+    <script src="navigation.js?v=20261105-logo-align"></script>
+    <link rel="stylesheet" href="tag-search.css">
+    <script src="tag-search.js"></script>
+    <link rel="stylesheet" href="site-header.css?v=20261105-logo-align">
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <img src="logo2.png" alt="Company Logo">
+        </div>
+        <nav>
+            <ul class="nav-center">
+                <li><a href="home.html">Home</a></li>
+                <li><a href="product.html">Products</a></li>
+                <li data-cart-nav><a href="cart.html">Cart</a></li>
+                <li data-order-nav><a href="order.html">Order</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">FAQ</a></li>
+            </ul>
+            <div class="search-bar" data-tag-search>
+                <input type="text" data-tag-input placeholder="Choose a tag..." aria-label="Search by tag" aria-expanded="false" autocomplete="off">
+                <div class="tag-options" data-tag-options hidden></div>
+            </div>
+            <div class="login-links" id="loginLinks">
+                <a href="login.html">Login</a>
+                <a href="register.html">Register</a>
+            </div>
+        </nav>
+    </header>
+    
+    <!-- Main Container -->
+    <div class="container">
+        <h1 style="text-align:center; margin-bottom:20px;">Your Shopping Cart</h1>
+        <!-- CartTable -->
+        <table id="cartTable">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="selectAll" /></th>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Dynamically generate shopping cart items -->
+            </tbody>
+        </table>
+        
+        <!-- Total price display -->
+        <div class="total-price">
+            Total: $<span id="totalPrice">0.00</span>
+        </div>
+        
+        <!-- Batch operation button -->
+        <div class="action-buttons">
+            <button onclick="deleteSelected()">Delete Selected Items</button>
+            <button onclick="checkoutSelected()">Checkout Selected Items</button>
+        </div>
+    </div>
+    
+    <!-- footer -->
+    <footer>
+        <p>GroupCart · Multi-vendor shopping platform</p>
+    </footer>
+    
+    <script>
+        // Login status detection and logout function
+        window.onload = function() {
+            if (localStorage.getItem('isRegistered') === 'true') {
+                const loginLinksDiv = document.getElementById('loginLinks');
+                if (loginLinksDiv) {
+                    loginLinksDiv.innerHTML = '<a href="#" id="logoutLink">Log Out</a>';
+                    document.getElementById('logoutLink').addEventListener('click', function () {
+                        localStorage.removeItem('isRegistered');
+                        localStorage.removeItem('CustomerID');
+                        localStorage.removeItem('VendorID');
+                        localStorage.removeItem('userType');
+                        alert("You have been logged out.");
+                        window.location.href = "home.html";
+                    });
+                }
+            }
+            // Initialize search drop-down function: this function is a general search code, which can be copied directly in the next reference
+            initSearchDropdown();
+        }
+        // General search drop-down function
+        function initSearchDropdown() { window.initTagSearch(); }
+
+        // Get the shopping cart data and render the table, using the database field name
+        function loadCart() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const tbody = document.querySelector('#cartTable tbody');
+            tbody.innerHTML = "";
+            cart.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="checkbox" class="item-checkbox" data-index="${index}"></td>
+                    <td>${item.Name}</td>
+                    <td>$${parseFloat(item.ListedPrice).toFixed(2)}</td>
+                    <td>
+                        <input type="number" min="1" value="${item.Quantity}" data-index="${index}" onchange="updateQuantity(this)">
+                    </td>
+                    <td class="subtotal" data-index="${index}">$${(item.Quantity * item.ListedPrice).toFixed(2)}</td>
+                    <td><button onclick="deleteItem(${index})">Delete</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+            updateTotal();
+        }
+        
+        // Update price
+        function updateQuantity(input) {
+            const index = input.getAttribute('data-index');
+            const newQuantity = Number(input.value);
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            if(!Number.isInteger(newQuantity) || newQuantity < 1 || newQuantity > 2147483647) {
+                input.value = cart[index].Quantity;
+                alert('Quantity must be a positive integer.');
+                return;
+            }
+            cart[index].Quantity = newQuantity;
+            localStorage.setItem('cart', JSON.stringify(cart));
+            // update subTotal
+            const subtotalElem = document.querySelector(`.subtotal[data-index="${index}"]`);
+            subtotalElem.textContent = "$" + (cart[index].Quantity * cart[index].ListedPrice).toFixed(2);
+            updateTotal();
+        }
+        
+        // Calculate and Demonstrate Total price
+        function updateTotal() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const checkboxes = document.querySelectorAll('.item-checkbox');
+            let total = 0;
+            checkboxes.forEach((cb, idx) => {
+                // Calculate only selected items
+                if (cb.checked) {
+                    total += cart[idx].Quantity * cart[idx].ListedPrice;
+                }
+            });
+            document.getElementById('totalPrice').textContent = total.toFixed(2);
+        }
+        
+        // Delete single item
+        function deleteItem(index) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCart();
+        }
+        
+        // Delete selected item
+        function deleteSelected() {
+            const checkboxes = document.querySelectorAll('.item-checkbox');
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            // Reverse order deletion to avoid index problems
+            for(let i = checkboxes.length - 1; i >= 0; i--) {
+                if(checkboxes[i].checked) {
+                    cart.splice(i, 1);
+                }
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCart();
+        }
+
+        // Settle the selected goods
+        function checkoutSelected() {
+            if(localStorage.getItem('isRegistered') !== 'true' || localStorage.getItem('userType') !== 'customer') {
+                alert("Only registered customers can proceed with checkout.");
+                window.location.href = 'register.html';
+                return;
+            }
+            const checkboxes = document.querySelectorAll('.item-checkbox');
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let selectedItems = [];
+            let totalAmount = 0;
+
+            // Aggregate selected items
+            checkboxes.forEach((cb, idx) => {
+                if(cb.checked) {
+                    const item = cart[idx];
+                    selectedItems.push({
+                        ProductID: item.ProductID,
+                        Quantity: item.Quantity,
+                        TotalAmount: item.Quantity * item.ListedPrice
+                    });
+                    totalAmount += item.Quantity * item.ListedPrice;
+                }
+            });
+
+            if(selectedItems.length === 0) {
+                alert("Please select at least one item to checkout.");
+                return;
+            }
+
+            const customerID = localStorage.getItem('CustomerID');
+            const userType = localStorage.getItem('userType');
+
+            // Prepare the payload for the backend
+            const payload = {
+                customerID: customerID,
+                userType: userType,
+                totalAmount: totalAmount,
+                items: selectedItems
+            };
+
+            // Send the aggregated data to the backend
+            fetch('http://localhost:5000/api/cart_confirm_order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(async response => {
+                const result = await response.json();
+                if (!response.ok || result.success !== true) {
+                    throw new Error(result.message || 'Order confirmation failed');
+                }
+                return result;
+            })
+            .then(result => {
+                const purchased = new Map(selectedItems.map(item => [item.ProductID, item.Quantity]));
+                const currentCart = JSON.parse(localStorage.getItem('cart')) || [];
+                const remaining = currentCart.flatMap(item => {
+                    const quantity = purchased.get(item.ProductID) || 0;
+                    if (!quantity) return [item];
+                    const consumed = Math.min(item.Quantity, quantity);
+                    purchased.set(item.ProductID, quantity - consumed);
+                    return item.Quantity > consumed ? [{...item, Quantity: item.Quantity - consumed}] : [];
+                });
+                localStorage.setItem('cart', JSON.stringify(remaining));
+                alert('Order(s) confirmed!');
+                window.location.href = 'order.html';
+            })
+            .catch(error => {
+                console.error("Error confirming orders:", error);
+                alert("Failed to confirm orders. Please try again later.");
+            });
+        }
+
+        // Process selectAll checkbox
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.item-checkbox');
+            checkboxes.forEach(cb => {
+                cb.checked = this.checked;
+            });
+            updateTotal();
+        });
+        
+        // Update total price when each check box changes
+        document.addEventListener('change', function(e) {
+            if(e.target.classList.contains('item-checkbox')) {
+                updateTotal();
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', loadCart);
+    </script>
+</body>
+</html>
