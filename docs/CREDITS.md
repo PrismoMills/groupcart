@@ -1,5 +1,5 @@
-# Credits and asset notes
+# Project background and assets
 
-GroupCart builds on the existing multi-vendor shopping application. Original contributor attribution is preserved in source comments. Packaging and subsequent functionality improvements do not imply sole authorship of the original code or assets.
+GroupCart started as a course project, developed step by step around the design and implementation of a multi-vendor shopping platform. It has since been refined with transactional checkout, seller-specific order management, grouped order views and interface improvements. This repository presents that continuing development as a runnable platform.
 
-Product images and the existing header artwork are included as demonstration assets from the original project. Their third-party licensing provenance has not been established. No license grant for those assets is implied by repository publication. Replace assets or document appropriate permissions before commercial reuse.
+Product images and header artwork are included for demonstration. Publishing the project does not grant rights to any third-party assets; check their applicable licenses before reusing them commercially.

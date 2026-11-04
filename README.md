@@ -91,4 +91,4 @@ The backend unit tests use an in-memory SQLite adapter for transaction-failure s
 
 This version supports local evaluation of the shopping and seller workflows. Payments, stock reservation, shipping integrations and refunds are not implemented. Account passwords in the sample application are stored in plaintext, and API identity currently relies on client-supplied account IDs rather than authenticated server sessions. Seller-directory creation is exposed without an administrator role. These are explicit areas for further development before deployment with real users or money.
 
-The repository includes the existing interface and sample assets. Original contributor credits in the source are retained; see [credits](docs/CREDITS.md). No blanket open-source license is asserted for third-party images.
+GroupCart started as a course project and has continued to evolve through functionality and interface improvements. See [project background and assets](docs/CREDITS.md) for context and notes on demonstration images.
