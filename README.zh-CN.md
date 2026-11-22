@@ -1,63 +1,131 @@
-# GroupCart 多商家电商平台
+<div align="center">
 
-[English](README.md)
+# GroupCart
 
-GroupCart 将商品浏览、购物车和订单管理整合在一个平台中。顾客可以按商家或标签筛选商品，一次结算多个商家的商品，并分别查看每个商家的履约状态；商家可以发布商品、浏览自己的商品目录并处理订单。
+### 一个购物车，多个商家，一次完成下单。
 
-## 已实现功能
+跨店选购，集中查看订单；<br>每个商家独立处理自己的商品和配送。
 
-- 商品目录、商家筛选和选择标签后即时搜索。
-- 购物车与跨商家结算，一次结算统一展示，内部区分各商家订单。
-- 商家独立发货状态、顾客确认收货、符合条件时取消订单或移除商品。
-- 服务端数量及价格校验、按当前数据库价格计算订单金额。
-- 下单和发布商品的数据库事务保护，失败时回滚；购物车下单失败时保留商品。
-- 顾客注册与商家目录管理。
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-Web%20app-000000?logo=flask&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white)
 
-## 本地运行
+[功能体验](#从挑选商品到确认收货) · [本地启动](#在本地试一试) · [实现与测试](#实现与测试) · [English](README.md)
 
-需要 Python 3.10+、MySQL 8.0 和浏览器。Node.js 仅用于前端测试。
+</div>
 
-1. 在项目根目录执行：
+---
 
-   ```powershell
-   python -m venv .venv
-   .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-   ```
+## 从挑选商品到确认收货
 
-2. 在 MySQL Workbench 中打开 `database/seed.sql`，使用有建库、建表和创建触发器权限的账号执行。脚本会创建 **ecommerceplatform**，并导入示例商品、顾客、商家和订单。新电脑上不需要提前创建同名库。
+在一家店选好商品，还可以继续逛另一家。结算时，GroupCart 把购物车中的商品按商家拆成独立订单，再放进同一个结算分组。你可以一起查看这次购买，也能分别跟踪各家店的发货进度。
 
-   请只导入到新的开发环境：原脚本带有建库和删表语句，不能直接拿来覆盖需要保留数据的数据库。
+| 顾客可以做什么 | 商家可以做什么 |
+| :--- | :--- |
+| 按商家、标签浏览商品，即时搜索 | 发布商品，搜索自己的商品目录 |
+| 跨店加购，一次结算 | 查看、处理属于自己的订单 |
+| 在同一购买分组下查看不同商家的订单 | 独立更新发货状态 |
+| 取消符合条件的订单、发货前移除商品、确认收货 | 在同一个平台管理商品和履约 |
 
-3. 为应用创建 MySQL 账号，操作示例见 [数据库说明](docs/DATABASE.md)。复制连接模板：
+项目同时提供顾客注册、商家目录和商家目录管理功能。
 
-   ```powershell
-   Copy-Item app/db_config.example.json app/db_config.json
-   ```
+### 一次购买，各自发货
 
-   修改新文件中的 MySQL 用户名、密码和端口。数据库名默认保持 `ecommerceplatform`。模板中的账号不会随 SQL 自动创建；它也不是网站登录账号。实际连接配置已加入 Git 忽略规则。
+```text
+购物车
+├── 商家 A · 两件商品 ──→ 商家订单 A · 备货中
+└── 商家 B · 一件商品 ──→ 商家订单 B · 已发货
+                          └── 同一个结算分组
+```
 
-4. 启动：
+结算时会读取 MySQL 中的当前价格、校验数量，并在同一事务中创建各商家订单。任何一部分失败，整次结算都会回滚。移除符合条件的商品时，订单金额也会重新计算。
 
-   ```powershell
-   .\.venv\Scripts\python.exe app/main.py
-   ```
+## 在本地试一试
 
-5. 浏览器打开 **http://localhost:5000**，前端和 API 由同一个程序提供，无需另开网页服务器。请统一使用这个地址，避免浏览器本地存储因域名不同而分开。
+准备 **Python 3.10+**、**MySQL 8** 和浏览器。运行 JavaScript 检查时才需要 Node.js。
 
-示例顾客账号：`C001 / C001`、`C002 / C002`；示例商家账号：`V001 / V001`、`V002 / V002`。前者是账号 ID，后者是密码。
+### 1. 安装依赖
 
-SQL 文件只负责初始化，运行后新增的订单保存在使用者自己的 MySQL 数据目录中，不会写回 SQL 文件。更换数据库名称时，要同时修改 SQL 开头的 `CREATE DATABASE`、`USE` 和连接配置。
+在仓库根目录打开 PowerShell：
 
-## 技术实现
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
 
-后端使用 Flask 和 PyMySQL，数据存储使用 MySQL；前端使用 HTML、CSS 和 JavaScript。跨商家结算在一个事务中创建多张商家订单，共用结算批次编号；一个商家订单写入失败时，整个结算回滚。移除商品后，根据剩余订单明细重新计算金额。
+### 2. 导入演示数据库
 
-没有批次编号的旧订单，按同一顾客、同一秒进行页面合并。因此，同一顾客在同一秒分别进行的历史购买可能被归入同一展示组。
+在 MySQL Workbench 中打开并运行 `database/seed.sql`。脚本会创建 `ecommerceplatform` 数据库，导入商品、顾客、商家、标签和订单等演示数据。
 
-测试方式见 [英文首页](README.md#validation) 与 [MySQL 集成测试说明](docs/TESTING.md)。
+> 脚本会删除并重建数据表。请用于全新的演示数据库；重复执行会覆盖已有数据。详见[数据库说明](docs/DATABASE.md)。
 
-## 当前边界
+### 3. 配置数据库连接
 
-当前版本适合在本地体验商品和订单流程。尚未接入真实支付、库存预占、物流或退款；账号密码仍是明文存储，API 身份依赖客户端传入的账号 ID，尚未使用服务端认证会话；商家目录新增也尚未限制为管理员权限。这些能力需要在面向真实用户部署之前补齐。
+```powershell
+Copy-Item app/db_config.example.json app/db_config.json
+```
 
-GroupCart 最初作为课程项目，从平台设计到功能实现逐步开发，之后持续完善结算事务、商家订单管理、订单分组和页面体验。项目中的商品图片与顶部图片用于演示；如需商业使用，应确认相关第三方素材的授权，详见 [项目背景与资源说明](docs/CREDITS.md)。
+在 `app/db_config.json` 中填写自己的 MySQL 用户名和密码，数据库名称保留为 `ecommerceplatform`。模板用户名需要自行替换，导入脚本不会创建 MySQL 用户。本地配置已加入 Git 忽略规则。
+
+### 4. 启动
+
+```powershell
+.\.venv\Scripts\python.exe app/main.py
+```
+
+打开 **[http://localhost:5000](http://localhost:5000)**。前端使用 `localhost` 和浏览器本地状态，请始终使用同一主机名。页面和图片由 Flask 一起提供，无需单独启动前端服务。
+
+macOS / Linux 下将 Python 路径换成 `.venv/bin/python`，复制命令使用 `cp`。
+
+| 演示身份 | 账号 | 密码 |
+| :--- | :--- | :--- |
+| 顾客 | `C001` 或 `C002` | 与账号相同 |
+| 商家 | `V001` 或 `V002` | 与账号相同 |
+
+账号区分大小写。这些是网站演示账号，与 MySQL 的连接账号无关。
+
+## 实现与测试
+
+<details>
+<summary><strong>目录结构</strong></summary>
+
+```text
+app/
+├── main.py                 Flask 路由与结算逻辑
+├── webpage/                HTML、CSS 和 JavaScript
+├── static/images/          演示商品图片
+└── db_config.example.json  本地数据库配置模板
+database/seed.sql           数据表与演示数据
+tests/                      后端、前端检查
+docs/                       数据库、测试和项目背景说明
+```
+
+</details>
+
+<details>
+<summary><strong>运行检查</strong></summary>
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests -p test_fixes.py
+node tests/test_cart.cjs
+node tests/test_order_groups.cjs
+node tests/test_tag_search.cjs
+node tests/test_catalog.cjs
+```
+
+后端回归测试使用内存 SQLite 适配器，包含失败场景。真实 MySQL 环境下的检查方式见[测试说明](docs/TESTING.md)。
+
+</details>
+
+<details>
+<summary><strong>历史订单如何分组</strong></summary>
+
+新订单使用明确的结算 ID。缺少结算 ID 的历史订单，按顾客和精确到秒的时间合并展示；同一顾客在同一秒内完成的两次历史购买，可能会显示为一组。
+
+</details>
+
+## 使用真实账号之前
+
+GroupCart 当前用于本地体验与评估，尚未实现支付、库存预留、物流集成和退款。演示密码以明文保存，接口通过客户端传入的账号 ID 识别身份，尚未建立服务端登录会话；商家目录创建功能也没有管理员权限控制。接入真实用户或资金之前，需要继续完善认证与授权。
+
+项目起始于课程作业，随后补充了事务结算、订单分组和界面改进。项目背景及演示素材说明见[此处](docs/CREDITS.md)。
