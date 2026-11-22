@@ -1,81 +1,109 @@
+<div align="center">
+
 # GroupCart
 
-**A multi-vendor shopping platform built with Flask, MySQL and JavaScript.**
+### One cart. Multiple sellers. A checkout that keeps everything together.
 
-GroupCart brings product discovery, shopping carts and order tracking into one place. Customers can browse products by seller or tag, purchase from several sellers in one checkout, and track each seller’s fulfillment separately. Sellers manage their own catalog and incoming orders.
+A local shopping demo where customers shop across stores<br>and each seller stays in control of their own orders.
 
-## What you can do
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-Web%20app-000000?logo=flask&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white)
 
-- Browse a product catalog, filter by seller, or select a tag to search immediately.
-- Add products to a cart and check out across multiple sellers.
-- View one checkout as a group, with separate seller orders and fulfillment statuses.
-- Cancel eligible orders, remove eligible items before shipment, and confirm receipt.
-- Sign in as a seller to publish products, view seller-specific search results and manage fulfillment.
-- Register customer accounts and manage the seller directory.
+[Explore the experience](#a-shopping-trip-with-groupcart) · [Run locally](#try-it-locally) · [Project notes](#under-the-hood) · [简体中文](README.zh-CN.md)
 
-## How checkout works
+</div>
 
-The backend validates quantities and prices, retrieves current product prices from MySQL and splits cart items by seller. All resulting orders are written in one database transaction: a failure rolls back the entire checkout. A shared checkout identifier keeps the seller orders together in the customer view. Removing an item recalculates the order total from its remaining line items.
+---
 
-The interface also groups older orders from the same customer created in the same second. These older records have no explicit checkout identifier, so this display rule may combine separate historical purchases made within one second.
+## A shopping trip with GroupCart
 
-## Run locally
+Find something you like, add it to your cart, and keep browsing another seller. When you check out, GroupCart turns that cart into a shared purchase with separate seller orders—so one store can ship while another is still preparing.
 
-Requirements: Python 3.10+, MySQL 8.0, and a web browser. Node.js is optional and only needed for frontend tests.
+| For shoppers | For sellers |
+| :--- | :--- |
+| Browse products by seller or tag, with immediate search | Publish products and search your own catalog |
+| Buy from several stores in one checkout | See and fulfill your own orders |
+| Track seller orders together under one purchase | Update fulfillment without changing another seller's orders |
+| Cancel eligible orders, remove items before shipment, and confirm receipt | Keep your storefront and order work in one place |
 
-1. Create a virtual environment and install dependencies:
+The app also includes customer registration and a seller directory with management tools.
 
-   ```powershell
-   python -m venv .venv
-   .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-   ```
-
-2. Import `database/seed.sql` using MySQL Workbench: open the script and execute it with an account allowed to create databases, tables and triggers. It creates **ecommerceplatform** and loads sample customers, sellers, products, tags and orders. On a fresh MySQL installation, this database does not need to exist first.
-
-   **Import once into a fresh instance.** The original script includes `CREATE DATABASE`, `DROP TABLE` and sample records. Do not rerun it against a database containing data you need to keep. See [database setup](docs/DATABASE.md).
-
-3. Copy the connection template and edit it with your own MySQL credentials:
-
-   ```powershell
-   Copy-Item app/db_config.example.json app/db_config.json
-   ```
-
-   Use host `127.0.0.1`, your MySQL port (normally `3306`), database `ecommerceplatform`, and a database user/password you created. The example username is a placeholder; importing the SQL does not create it. Do not commit `app/db_config.json`.
-
-4. Start the platform:
-
-   ```powershell
-   .\.venv\Scripts\python.exe app/main.py
-   ```
-
-5. Open **http://localhost:5000**. Use this hostname consistently because the frontend calls `localhost:5000` and stores cart/account state in browser local storage. Product images are served by the same Flask process. No separate frontend server is required.
-
-On macOS/Linux, use `.venv/bin/python` instead of `.\.venv\Scripts\python.exe` and `cp` instead of `Copy-Item`.
-
-### Sample accounts
-
-| Role | Account ID | Password |
-| --- | --- | --- |
-| Customer | C001 | C001 |
-| Customer | C002 | C002 |
-| Seller | V001 | V001 |
-| Seller | V002 | V002 |
-
-IDs are case-sensitive in the interface. These are website accounts from the sample data, not MySQL connection credentials.
-
-## Project layout
+### One purchase, separate deliveries
 
 ```text
-app/main.py                 Flask API and frontend serving
-app/webpage/                HTML, shared JavaScript and styles
-app/static/images/          Product and interface images
-app/db_config.example.json  Portable connection template
-database/seed.sql           Original MySQL schema and sample data
-tests/                      Backend and frontend regression checks
-docs/                       Database setup and implementation notes
+Your cart
+├── Store A · two products ──→ Seller order A · Preparing
+└── Store B · one product  ──→ Seller order B · Shipped
+                              └── Same checkout group
 ```
 
-## Validation
+Checkout reads current prices from MySQL, validates quantities, and creates every seller order in a single transaction. If one part fails, the whole checkout rolls back. Removing an eligible item also recalculates its order total.
+
+## Try it locally
+
+You'll need **Python 3.10+**, **MySQL 8**, and a browser. Node.js is optional for JavaScript checks.
+
+### 1. Install the Python dependencies
+
+From the repository root in PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+### 2. Import the demo database
+
+Open `database/seed.sql` in MySQL Workbench and run it against a fresh local instance. It creates the `ecommerceplatform` database and fills it with sample products, customers, sellers, tags, and orders.
+
+> The seed script drops and recreates tables. Use it for a fresh demo database; rerunning it will replace existing data. See [database setup](docs/DATABASE.md).
+
+### 3. Connect the app to MySQL
+
+```powershell
+Copy-Item app/db_config.example.json app/db_config.json
+```
+
+Edit `app/db_config.json` with your own MySQL username and password. Keep `database` set to `ecommerceplatform`. The example username is a placeholder; the seed script does not create a MySQL account. Your local configuration is ignored by Git.
+
+### 4. Start shopping
+
+```powershell
+.\.venv\Scripts\python.exe app/main.py
+```
+
+Open **[http://localhost:5000](http://localhost:5000)**. Use the same hostname throughout; the frontend uses `localhost` and browser-local state. Flask serves the interface and images together.
+
+On macOS/Linux, use `.venv/bin/python` and `cp` instead of their Windows equivalents.
+
+| Demo role | Account | Password |
+| :--- | :--- | :--- |
+| Customer | `C001` or `C002` | Same as the account |
+| Seller | `V001` or `V002` | Same as the account |
+
+Account IDs are case-sensitive. These are website demo accounts, separate from your MySQL credentials.
+
+## Under the hood
+
+<details>
+<summary><strong>Repository map</strong></summary>
+
+```text
+app/
+├── main.py                 Flask routes and checkout logic
+├── webpage/                HTML, CSS, and JavaScript
+├── static/images/          Demo product images
+└── db_config.example.json  Local database configuration template
+database/seed.sql           Demo schema and data
+tests/                      Backend and frontend checks
+docs/                       Database, testing, and project notes
+```
+
+</details>
+
+<details>
+<summary><strong>Run the checks</strong></summary>
 
 ```powershell
 .\.venv\Scripts\python.exe -m unittest discover -s tests -p test_fixes.py
@@ -85,10 +113,19 @@ node tests/test_tag_search.cjs
 node tests/test_catalog.cjs
 ```
 
-The backend unit tests use an in-memory SQLite adapter for transaction-failure scenarios. Additional MySQL integration checks cover actual triggers and multi-seller checkout; see [testing](docs/TESTING.md).
+Backend regression tests use an in-memory SQLite adapter, including failure scenarios. See [testing notes](docs/TESTING.md) for checks against a real MySQL instance.
 
-## Current scope
+</details>
 
-This version supports local evaluation of the shopping and seller workflows. Payments, stock reservation, shipping integrations and refunds are not implemented. Account passwords in the sample application are stored in plaintext, and API identity currently relies on client-supplied account IDs rather than authenticated server sessions. Seller-directory creation is exposed without an administrator role. These are explicit areas for further development before deployment with real users or money.
+<details>
+<summary><strong>How older orders are grouped</strong></summary>
 
-GroupCart started as a course project and has continued to evolve through functionality and interface improvements. See [project background and assets](docs/CREDITS.md) for context and notes on demonstration images.
+New purchases use an explicit checkout ID. Historical orders without one are grouped by customer and timestamp to the second. Two separate historical purchases made in the same second can therefore appear in one group.
+
+</details>
+
+## Before using real accounts
+
+GroupCart is a local evaluation project. Payments, stock reservation, shipping integrations, and refunds are not implemented. Demo passwords are stored as plaintext, API identity comes from client-supplied account IDs rather than authenticated server sessions, and seller-directory creation has no administrator role. Authentication and authorization need further work before this app handles real users or money.
+
+Originally built as a course project and refined with transactional checkout, grouped orders, and interface improvements. See [project background and asset notes](docs/CREDITS.md).
